@@ -151,8 +151,10 @@ const startServer = async () => {
     console.error(error);
   }
 
-  // Step 3: Targeted column/ENUM migrations — always non-fatal
-  await runMigrations();
+  // Step 3: Targeted column/ENUM migrations — MySQL only (INFORMATION_SCHEMA not available on SQLite)
+  if (sequelize.getDialect() !== 'sqlite') {
+    await runMigrations();
+  }
 
   // Step 4: Start listening
   httpServer.listen(PORT, () => {
